@@ -1,7 +1,7 @@
 var express = require('express');
 var moment = require('moment');
 var regression = require('regression');
-var stats = require('stats-lite')
+var stats = require('stats-lite');
 
 var app = express();
 
@@ -10,10 +10,10 @@ app.use(express.static('public'));
 var day = 24 * 3600 * 1000;
 var fiveMin = 300 * 1000;
 
-var trainingPeriod = 10;
-var stdevs = 2;
-
 app.get('/data', function (req, res) {
+  var params = req.query;
+  var trainingPeriod = params.trainingPeriod;
+  var stdevs = params.stdevs;
   var dayAgo = new Date(Date.now() - day);
   var dates = Array.apply(null, Array(day / fiveMin)).map((i, period) => {
     return new Date(dayAgo.getTime() + period * fiveMin);
@@ -21,7 +21,7 @@ app.get('/data', function (req, res) {
   var rawData = dates.map(date => {
     return {
       date: moment(date).format('YYYY-MM-DD HH:mm'),
-      Raw: 50 * Math.cos(2 * Math.PI * date.getTime() / (24 * 3600 * 1000)) + (20 * Math.random() - 0.5) + (Math.random() < 0.1 ? (100 * Math.random() - 50) : 0)
+      Raw: params.cosMag * Math.cos(2 * Math.PI * date.getTime() / (params.cosPeriod * 3600 * 1000)) + (2 * params.smallRandomMagnitude * (Math.random() - 0.5)) + (Math.random() < (params.largeRandomChance / 100) ? (2 * params.largeRandomMagnitude * (Math.random() - 0.5)) : 0)
     };
   });
   var data = rawData.map((datum, i) => {

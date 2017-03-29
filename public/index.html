@@ -23,6 +23,47 @@
         <div id="chart"><div>
       </div>
     </div>
+    <div class="ui segment">
+      <div class="ui form">
+        <h4 class="ui dividing header">Training</h4>
+        <div class="fields">
+          <div class="field">
+            <label>Points Trained On</label>
+            <input type="number" id="trainingPeriod" value="10" min="0">
+          </div>
+          <div class="field">
+            <label>Upper/Lower Standard Devs</label>
+            <input type="number" id="stdevs" value="2" min="0">
+          </div>
+          <div class="field">
+            <label>Cosine Magnitude</label>
+            <input type="number" id="cosMag" value="50" min="0">
+          </div>
+          <div class="field">
+            <label>Cosine Period (Hours)</label>
+            <input type="number" id="cosPeriod" value="24" min="1">
+          </div>
+        </div>
+        <h4 class="ui dividing header">Large Deviations</h4>
+        <div class="fields">
+          <div class="field">
+            <label>Event Magnitude</label>
+            <input type="number" id="largeRandomMagnitude" value="50" min="0">
+          </div>
+          <div class="field">
+            <label>Event Chance (Percent)</label>
+            <input type="number" id="largeRandomChance" value="10" min="0" max="100">
+          </div>
+        </div>
+        <h4 class="ui dividing header">Small Deviations (On Every Point)</h4>
+        <div class="fields">
+          <div class="field">
+            <label>Event Magnitude</label>
+            <input type="number" id="smallRandomMagnitude" value="10" min="0">
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.js"></script>
@@ -32,8 +73,22 @@
 
     <script>
       $(function() {
+        generate();
+        $('input').change(generate);
+      });
+
+      function generate() {
         $.get({
           url: '/data',
+          data: {
+            trainingPeriod: $('#trainingPeriod').val(),
+            stdevs: $('#stdevs').val(),
+            cosMag: $('#cosMag').val(),
+            cosPeriod: $('#cosPeriod').val(),
+            largeRandomMagnitude: $('#largeRandomMagnitude').val(),
+            largeRandomChance: $('#largeRandomChance').val(),
+            smallRandomMagnitude: $('#smallRandomMagnitude').val()
+          },
           success: function(raw) {
             c3.generate({
               data: {
@@ -54,8 +109,8 @@
               }
             });
           }
-        })
-      });
+        });
+      }
     </script>
   </body>
 </html>
