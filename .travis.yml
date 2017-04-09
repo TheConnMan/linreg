@@ -1,0 +1,20 @@
+sudo: required
+
+language: node_js
+node_js:
+  - "6"
+
+services:
+  - docker
+
+script:
+  - docker build -t theconnman/linreg .
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker push theconnman/linreg:latest;
+    elif [ "$TRAVIS_BRANCH" == "dev" ]; then
+      docker tag theconnman/linreg theconnman/linreg:latest-dev;
+      docker push theconnman/linreg:latest-dev;
+    fi
